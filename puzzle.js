@@ -1,5 +1,28 @@
 "use strict";
 
+function applyTimeOfDayTheme() {
+  const hour = new Date().getHours();
+  // Day: 6am-5:59pm, Night: 6pm-5:59am
+  const theme = (hour >= 6 && hour < 18) ? "day" : "night";
+
+  document.body.dataset.theme = theme;
+
+  // Small UI badge near the title
+  const badge = document.getElementById("themeBadge");
+  if (badge) {
+    badge.textContent = `Theme: ${theme.charAt(0).toUpperCase()}${theme.slice(1)}`;
+  }
+
+  // Re-apply at the next hour boundary (in case the page stays open)
+  const now = new Date();
+  const msToNextHour =
+    (60 - now.getMinutes()) * 60 * 1000
+    - now.getSeconds() * 1000
+    - now.getMilliseconds();
+
+  window.setTimeout(() => this.applyTimeOfDayTheme(), Math.max(1_000, msToNextHour));
+}
+
 class SantaPuzzleGame {
   constructor(options) {
     this.gridEl = options.gridEl;
@@ -7,11 +30,36 @@ class SantaPuzzleGame {
     this.movesEl = options.movesEl;
     this.magicEl = options.magicEl;
 
+    this.confettiCanvas = options.confettiCanvas;
+    this.confettiCtx = this.confettiCanvas ? this.confettiCanvas.getContext("2d") : null;
+    this.confetti = [];
+    this.confettiAnimId = null;
+
+    this.handleResize = this.handleResize.bind(this);
+    window.addEventListener("resize", this.handleResize);
+    this.handleResize();
+
     this.moveSound = options.moveSound;
     this.bgMusic = options.bgMusic;
     this.winSound = options.winSound;
 
     this.isRunning = false;
+
+    // Power-ups (non-DB feature)
+    this.puFreezeBtn = options.puFreezeBtn;
+    this.puFreezeUsesEl = options.puFreezeUsesEl;
+    this.puSwapBtn = options.puSwapBtn;
+    this.puSwapUsesEl = options.puSwapUsesEl;
+    this.puInsightBtn = options.puInsightBtn;
+    this.puInsightText = options.puInsightText;
+
+    this.powerups = {
+      freeze: 1,
+      swap: 1,
+    };
+
+    // If > 0, timer is paused for this many seconds
+    this.freezeTimerSecondsLeft = 0;
 
     this.resetDifficultyBtn = options.resetDifficultyBtn;
     this.tileElsByValue = new Map();
@@ -67,19 +115,49 @@ class SantaPuzzleGame {
   }
 
   init() {
+    document.addEventListener("keydown", (e) => {
+        if (e.key.toLowerCase() === "w") {
+          this.debugForceWin();
+        }
+      });
+
+    if (!this.gridEl) {
+      console.error("Missing #grid element");
+      return;
+    }
+
     this.gridEl.addEventListener("click", this.handleGridClick);
-    this.shuffleBtn.addEventListener("click", this.handleShuffle);
-    this.resetBtn.addEventListener("click", this.handleReset);
-    this.magicBtn.addEventListener("click", this.handleMagic);
-    this.playAgainBtn.addEventListener("click", this.handlePlayAgain);
+
+    if (!this.shuffleBtn) console.error("Missing #shuffleBtn");
+    else this.shuffleBtn.addEventListener("click", this.handleShuffle);
+
+    if (!this.resetBtn) console.error("Missing #resetBtn");
+    else this.resetBtn.addEventListener("click", this.handleReset);
+
+    if (!this.magicBtn) console.error("Missing #magicBtn");
+    else this.magicBtn.addEventListener("click", this.handleMagic);
+
+    if (!this.playAgainBtn) console.error("Missing #playAgainBtn");
+    else this.playAgainBtn.addEventListener("click", this.handlePlayAgain);
+
+    // Power-ups
+    if (this.puFreezeBtn) {
+      this.puFreezeBtn.addEventListener("click", () => this.useTimeFreeze());
+    }
+    if (this.puSwapBtn) {
+      this.puSwapBtn.addEventListener("click", () => this.useSwapPass());
+    }
+    if (this.puInsightBtn) {
+      this.puInsightBtn.addEventListener("click", () => this.showCompletionInsight());
+    }
 
     if (this.gridSizeSelect) {
       this.gridSizeSelect.addEventListener("change", this.handleGridSizeChange);
     }
 
     if (this.resetDifficultyBtn) {
-        this.resetDifficultyBtn.addEventListener("click", this.handleResetDifficulty);
-      }
+      this.resetDifficultyBtn.addEventListener("click", this.handleResetDifficulty);
+    }
 
     this.loadProgress();
     this.applyGridCSSVars();
@@ -87,6 +165,17 @@ class SantaPuzzleGame {
 
     this.resetGame();
     this.setRunning(false);
+  }
+
+  debugForceWin() {
+    // Set solved board state
+    this.setSolvedState();          // if you have this helper
+    this.moves += 1;                // optional, just so HUD changes
+    this.updateHUD();
+    this.updateTilePositions();
+
+    // Trigger normal win flow (confetti, overlay, sounds, stop timer/music)
+    this.handleWin();
   }
 
   loadProgress() {
@@ -168,12 +257,136 @@ class SantaPuzzleGame {
   setRunning(running) {
     this.isRunning = running;
 
+    this.updatePowerupsUI();
+
     if (!running) {
       this.stopTimer();
       this.pauseBgMusic();
     } else {
       this.startTimer();
       this.playBgMusic();
+    }
+
+    this.updatePowerupsUI(this.isRunning);
+  }
+
+  resetPowerupsForNewGame() {
+    this.powerups.freeze = 1;
+    this.powerups.swap = 1;
+    this.freezeTimerSecondsLeft = 0;
+
+    if (this.puInsightText) {
+      this.puInsightText.textContent = "Playing... click Completion Insight to estimate moves remaining.";
+    }
+
+    this.updatePowerupsUI(true);
+  }
+
+  updatePowerupsUI(isRunning) {
+    if (this.puFreezeUsesEl) this.puFreezeUsesEl.textContent = String(this.powerups.freeze);
+    if (this.puSwapUsesEl) this.puSwapUsesEl.textContent = String(this.powerups.swap);
+
+    if (this.puFreezeBtn) this.puFreezeBtn.disabled = !isRunning || this.powerups.freeze <= 0;
+    if (this.puSwapBtn) this.puSwapBtn.disabled = !isRunning || this.powerups.swap <= 0;
+    if (this.puInsightBtn) this.puInsightBtn.disabled = !isRunning;
+  }
+
+  useTimeFreeze() {
+    if (!this.isRunning) return;
+    if (this.solved) return;
+    if (this.powerups.freeze <= 0) return;
+    if (this.freezeTimerSecondsLeft > 0) return; // already frozen
+
+    this.powerups.freeze -= 1;
+    this.freezeTimerSecondsLeft = 10;
+    this.updatePowerupsUI(true);
+
+    if (this.puInsightText) {
+      this.puInsightText.textContent = "Time Freeze active: 10s remaining.";
+    }
+
+    // Pause music during freeze for a clear "pause" feel
+    this.pauseBgMusic();
+  }
+
+  getSwapPassTargets() {
+    const { r, c } = this.indexToRC(this.emptyIndex);
+    const targets = [];
+
+    const pushIfValid = (rr, cc) => {
+      if (rr < 0 || rr >= this.gridSize || cc < 0 || cc >= this.gridSize) return;
+      targets.push(this.rcToIndex(rr, cc));
+    };
+
+    // Two-away in four directions
+    pushIfValid(r - 2, c);
+    pushIfValid(r + 2, c);
+    pushIfValid(r, c - 2);
+    pushIfValid(r, c + 2);
+
+    return targets.filter((idx) => this.state[idx] !== this.emptyValue);
+  }
+
+  useSwapPass() {
+    if (!this.isRunning) return;
+    if (this.solved) return;
+    if (this.powerups.swap <= 0) return;
+
+    const targets = this.getSwapPassTargets();
+    if (targets.length === 0) {
+      if (this.puInsightText) {
+        this.puInsightText.textContent = "Swap Pass unavailable right now (no 2-away tile aligned with the empty space).";
+      }
+      return;
+    }
+
+    // Pick the target that reduces Manhattan distance the most
+    let bestIdx = targets[0];
+    let bestScore = Infinity;
+
+    for (const idx of targets) {
+      const simulated = [...this.state];
+      const tmp = simulated[idx];
+      simulated[idx] = simulated[this.emptyIndex];
+      simulated[this.emptyIndex] = tmp;
+      const score = this.totalManhattanDistance(simulated);
+      if (score < bestScore) {
+        bestScore = score;
+        bestIdx = idx;
+      }
+    }
+
+    this.powerups.swap -= 1;
+    this.updatePowerupsUI(true);
+
+    // Swap counts as a move
+    this.swap(bestIdx, this.emptyIndex);
+    this.emptyIndex = bestIdx;
+    this.moves += 1;
+    this.movesEl.textContent = String(this.moves);
+
+    this.updateTilePositions();
+    this.playMoveSound();
+
+    if (this.checkWin()) {
+      this.handleWin();
+      return;
+    }
+
+    if (this.puInsightText) {
+      this.puInsightText.textContent = "Swap Pass used!";
+    }
+  }
+
+  showCompletionInsight() {
+    if (!this.isRunning) return;
+    if (this.solved) return;
+
+    const manhattan = this.totalManhattanDistance(this.state);
+    const estimate = Math.max(0, Math.ceil(manhattan / 2));
+
+    if (this.puInsightText) {
+      this.puInsightText.textContent = `Estimated moves remaining: ~${estimate} (Manhattan: ${manhattan}).`;
     }
   }
 
@@ -232,9 +445,17 @@ class SantaPuzzleGame {
 
     this.magicBtn.disabled = this.magicUses === 0;
 
+    this.gridEl.classList.remove("win-glow", "win-pulse");
+    this.stopConfettiLoop();
+    this.confetti = [];
+
     this.applyGridCSSVars();
     this.buildTiles();
     this.setRunning(false);
+
+    this.freezeTimerSecondsLeft = 0;
+    if (this.puInsightText) this.puInsightText.textContent = "Shuffle to start a game.";
+    this.updatePowerupsUI(false);
   }
 
   startNewGame() {
@@ -260,6 +481,9 @@ class SantaPuzzleGame {
     this.applyDifficultyUI();
 
     this.magicBtn.disabled = this.magicUses === 0;
+
+    // Per-game power-ups reset on shuffle
+    this.resetPowerupsForNewGame();
 
     const last = { idx: -1 };
 
@@ -315,6 +539,65 @@ class SantaPuzzleGame {
     if (this.checkWin()) this.handleWin();
 
     if (this.magicUses === 0) this.magicBtn.disabled = true;
+  }
+
+  getNeighborIndicesOfEmpty() {
+    const { r, c } = this.indexToRC(this.emptyIndex);
+    const neighbors = [];
+
+    const add = (rr, cc) => {
+      if (rr < 0 || rr >= this.gridSize || cc < 0 || cc >= this.gridSize) return;
+      neighbors.push(this.rcToIndex(rr, cc));
+    };
+
+    add(r - 1, c);
+    add(r + 1, c);
+    add(r, c - 1);
+    add(r, c + 1);
+
+    return neighbors;
+  }
+
+  setSolvedState() {
+    this.state = [];
+    for (let v = 1; v < this.total; v++) this.state.push(v);
+    this.state.push(this.emptyValue);
+    this.emptyIndex = this.total - 1;
+  }
+
+  shuffleByMoves(movesAway) {
+    // start from solved
+    this.setSolvedState();         // or whatever your “reset to solved” function is
+    this.moves = 0;
+    this.seconds = 0;
+    this.solved = false;
+
+    let prevEmpty = null;
+
+    for (let i = 0; i < movesAway; i++) {
+      const options = this.getNeighborIndicesOfEmpty();
+
+      // avoid undoing last move if possible
+      const filtered = prevEmpty !== null ? options.filter(idx => idx !== prevEmpty) : options;
+      const pickFrom = filtered.length ? filtered : options;
+
+      const choice = pickFrom[Math.floor(Math.random() * pickFrom.length)];
+
+      prevEmpty = this.emptyIndex;
+      this.swap(choice, this.emptyIndex);
+      this.emptyIndex = choice;
+    }
+
+    this.updateHUD();
+    this.updateTilePositions();
+  }
+
+  getShuffleMoveCount() {
+    // You can tune these numbers
+    if (this.difficultyLevel <= 1) return 5;     // Easy
+    if (this.difficultyLevel === 2) return 25;   // Normal
+    if (this.difficultyLevel === 3) return 60;   // Hard
+    return 120;                                  // Expert+
   }
 
   findBestAdjacentMove() {
@@ -435,6 +718,13 @@ class SantaPuzzleGame {
     this.setRunning(false);
     this.playWinSound();
 
+    this.gridEl.classList.add("win-glow", "win-pulse");
+    this.spawnConfettiBurst(180);
+
+    setTimeout(() => {
+      this.gridEl.classList.remove("win-pulse");
+    }, 650);
+
     this.updateDifficultyAfterWin();
 
     this.winStatsEl.textContent =
@@ -442,6 +732,9 @@ class SantaPuzzleGame {
     this.showWinOverlay();
 
     this.magicBtn.disabled = true;
+
+    if (this.puInsightText) this.puInsightText.textContent = "Solved!";
+    this.updatePowerupsUI(false);
   }
 
   updateHUD() {
@@ -457,6 +750,21 @@ class SantaPuzzleGame {
     this.timerId = setInterval(() => {
       if (!this.isRunning) return;
       if (this.solved) return;
+
+      // Time Freeze: pause timer for 10 seconds
+      if (this.freezeTimerSecondsLeft > 0) {
+        this.freezeTimerSecondsLeft -= 1;
+        if (this.puInsightText) {
+          this.puInsightText.textContent = `Time Freeze active: ${this.freezeTimerSecondsLeft}s remaining.`;
+        }
+
+        // Resume music when freeze ends (still playing)
+        if (this.freezeTimerSecondsLeft === 0 && this.isRunning && !this.solved) {
+          this.playBgMusic();
+        }
+
+        return;
+      }
 
       this.seconds += 1;
       this.timerEl.textContent = String(this.seconds);
@@ -477,6 +785,10 @@ class SantaPuzzleGame {
 
   indexToRC(idx) {
     return { r: Math.floor(idx / this.gridSize), c: idx % this.gridSize };
+  }
+
+  rcToIndex(r, c) {
+    return r * this.gridSize + c;
   }
 
   isAdjacent(aIdx, bIdx) {
@@ -634,9 +946,101 @@ class SantaPuzzleGame {
   handlePlayAgain() {
     this.startNewGame();
   }
+
+  handleResize() {
+    if (!this.confettiCanvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    this.confettiCanvas.width = Math.floor(window.innerWidth * dpr);
+    this.confettiCanvas.height = Math.floor(window.innerHeight * dpr);
+    this.confettiCanvas.style.width = `${window.innerWidth}px`;
+    this.confettiCanvas.style.height = `${window.innerHeight}px`;
+    if (this.confettiCtx) this.confettiCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  spawnConfettiBurst(count = 160) {
+    if (!this.confettiCanvas || !this.confettiCtx) return;
+
+    const cx = window.innerWidth / 2;
+    const cy = window.innerHeight / 3;
+
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 3 + Math.random() * 7;
+
+      this.confetti.push({
+        x: cx,
+        y: cy,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 2,
+        size: 4 + Math.random() * 6,
+        life: 60 + Math.floor(Math.random() * 60),
+        rot: Math.random() * Math.PI,
+        vr: (Math.random() - 0.5) * 0.25,
+        color: ["#2ee59d", "#f44336", "#ffd54f", "#64b5f6", "#ffffff"][Math.floor(Math.random() * 5)]
+      });
+    }
+
+    this.startConfettiLoop();
+  }
+
+  startConfettiLoop() {
+    if (this.confettiAnimId) return;
+
+    const tick = () => {
+      this.confettiAnimId = requestAnimationFrame(tick);
+      this.updateConfetti();
+      this.drawConfetti();
+      if (this.confetti.length === 0) this.stopConfettiLoop();
+    };
+
+    tick();
+  }
+
+  stopConfettiLoop() {
+    if (this.confettiAnimId) cancelAnimationFrame(this.confettiAnimId);
+    this.confettiAnimId = null;
+    if (this.confettiCtx) {
+      this.confettiCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    }
+  }
+
+  updateConfetti() {
+    const gravity = 0.18;
+    const drag = 0.985;
+
+    this.confetti = this.confetti
+      .map(p => {
+        p.vx *= drag;
+        p.vy = p.vy * drag + gravity;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.vr;
+        p.life -= 1;
+        return p;
+      })
+      .filter(p => p.life > 0 && p.y < window.innerHeight + 40);
+  }
+
+  drawConfetti() {
+    if (!this.confettiCtx) return;
+    const ctx = this.confettiCtx;
+
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+    for (const p of this.confetti) {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.65);
+      ctx.restore();
+    }
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  applyTimeOfDayTheme();
+
   const game = new SantaPuzzleGame({
     gridEl: document.getElementById("grid"),
     timerEl: document.getElementById("timer"),
@@ -648,6 +1052,13 @@ document.addEventListener("DOMContentLoaded", () => {
     shuffleBtn: document.getElementById("shuffleBtn"),
     resetBtn: document.getElementById("resetBtn"),
     magicBtn: document.getElementById("magicBtn"),
+
+    puFreezeBtn: document.getElementById("puFreezeBtn"),
+    puFreezeUsesEl: document.getElementById("puFreezeUses"),
+    puSwapBtn: document.getElementById("puSwapBtn"),
+    puSwapUsesEl: document.getElementById("puSwapUses"),
+    puInsightBtn: document.getElementById("puInsightBtn"),
+    puInsightText: document.getElementById("puInsightText"),
 
     winOverlay: document.getElementById("winOverlay"),
     winStatsEl: document.getElementById("winStats"),
@@ -662,6 +1073,8 @@ document.addEventListener("DOMContentLoaded", () => {
     moveSound: document.getElementById("moveSound"),
     bgMusic: document.getElementById("bgMusic"),
     winSound: document.getElementById("winSound"),
+
+    confettiCanvas: document.getElementById("confettiCanvas"),
 
     version: "santas_workshop",
     gridSize: 4,
