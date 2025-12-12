@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Santa’s Workshop Puzzle</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="puzzle.js" defer></script>
+</head>
+
+<body>
+  <header class="container">
+    <h1>🎅 Santa’s Workshop Fifteen Puzzle</h1>
+    <p class="subtitle">Slide the tiles to rebuild the image.</p>
+  </header>
+
+  <main class="container">
+    <section class="panel panel-grid">
+        <!-- LEFT SIDE: 2 rows -->
+        <div class="panel-left">
+          <!-- Row 1 -->
+          <div class="panel-top-row">
+            <div class="stat">
+              <span class="label">Time Elapsed</span>
+              <span id="timer">0</span>s
+            </div>
+
+            <div class="stat">
+              <span class="label">Current Moves</span>
+              <span id="moves">0</span>
+            </div>
+
+            <div class="stat">
+              <span class="label">Magic Remaining</span>
+              <span id="magic">3</span>
+            </div>
+          </div>
+
+          <!-- Row 2 -->
+          <div class="panel-bottom-row">
+            <label class="select-wrap">
+              <span class="select-label">Grid</span>
+              <select id="gridSizeSelect">
+                <option value="3">3×3</option>
+                <option value="4" selected>4×4</option>
+                <option value="6">6×6</option>
+                <option value="8">8×8</option>
+                <option value="10">10×10</option>
+              </select>
+            </label>
+
+            <div class="control-buttons">
+              <button id="shuffleBtn">Shuffle</button>
+              <button id="resetBtn">Reset Puzzle</button>
+              <button id="magicBtn">Use Magic</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT SIDE: difficulty spans full height -->
+        <div class="stat stat-difficulty">
+          <div class="difficulty-top">
+            <span class="label">Difficulty</span>
+            <button id="resetDifficultyBtn" class="mini-btn" type="button">Reset</button>
+          </div>
+
+          <div class="difficulty-row">
+            <span id="difficultyLabel">Level 1</span>
+            <span id="difficultyText">Easy</span>
+          </div>
+
+          <div class="meter" aria-label="Difficulty meter">
+            <div id="difficultyFill" class="meter-fill"></div>
+          </div>
+        </div>
+      </section>
+
+    <section class="game">
+      <div id="grid" class="grid" aria-label="Fifteen puzzle grid"></div>
+    </section>
+
+    <div id="winOverlay" class="overlay" aria-hidden="true">
+      <div class="overlay-card">
+        <h2>🎄 You solved it!</h2>
+        <p id="winStats"></p>
+        <button id="playAgainBtn">Play Again</button>
+      </div>
+    </div>
+  </main>
+<audio id="moveSound" preload="auto" src="sounds/tile.mp3"></audio>
+<audio id="bgMusic" preload="auto" loop src="sounds/background.mp3"></audio>
+<audio id="winSound" preload="auto" src="sounds/win.mp3"></audio>
+</body>
+</html>
