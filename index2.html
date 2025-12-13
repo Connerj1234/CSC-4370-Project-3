@@ -90,7 +90,6 @@
       <div class="game-area">
         <div id="grid" class="grid" aria-label="Fifteen puzzle grid"></div>
 
-        <div class="side-panel">
         <aside class="powerups" aria-label="Power-ups panel">
           <h2 class="powerups-title">Power-ups</h2>
 
@@ -125,101 +124,78 @@
             <div id="puInsightText" class="powerups-output-value">Shuffle to start a game.</div>
           </div>
         </aside>
+      </div>
+    </section>
+    <section class="progress" aria-label="Progress tracking">
+      <div class="progress-card">
+        <div class="progress-header">
+          <h2 class="progress-title">Progress</h2>
+          <button id="progressRefreshBtn" class="progress-refresh" type="button">Refresh</button>
+        </div>
 
-        <section class="story-panel" aria-label="Story mode">
-          <div class="story-head">
-            <h2 class="story-title">Story Mode</h2>
-            <button id="storyPlayBtn" class="story-play" type="button">Play</button>
+        <div id="progressLoggedOut" class="progress-loggedout">
+          Log in to track wins, personal bests, achievements, and story progress.
+        </div>
+
+        <div id="progressContent" class="progress-content" hidden>
+          <div class="progress-metrics">
+            <div class="metric">
+              <div class="metric-label">Wins</div>
+              <div id="statWins" class="metric-value">—</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Sessions</div>
+              <div id="statSessions" class="metric-value">—</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Best Time</div>
+              <div id="statBestTime" class="metric-value">—</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Best Moves</div>
+              <div id="statBestMoves" class="metric-value">—</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Story Stage</div>
+              <div id="statStoryStage" class="metric-value">—</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Puzzles Solved</div>
+              <div id="statSolved" class="metric-value">—</div>
+            </div>
           </div>
 
-          <div id="storyLoggedOut" class="story-muted" style="display:none;">Log in to track story progress.</div>
-
-          <div id="storyContent">
-            <div class="story-meta">
-              <div class="story-chip"><span class="story-chip-label">Stage</span><span id="storyStage" class="story-chip-value">1</span></div>
-              <div class="story-chip"><span class="story-chip-label">Solved</span><span id="storySolved" class="story-chip-value">0</span></div>
+          <div class="progress-grid">
+            <div class="progress-panel">
+              <h3 class="progress-subtitle">Achievements</h3>
+              <ul id="achievementsList" class="achievements-list"></ul>
             </div>
 
-            <div class="story-bar" aria-hidden="true"><div id="storyBarFill" class="story-bar-fill" style="width:0%;"></div></div>
-            <div id="storyGoal" class="story-goal">Solve puzzles to unlock the next chapter.</div>
-
-            <div id="storyText" class="story-text">The workshop is quiet... for now.</div>
+            <div class="progress-panel">
+              <h3 class="progress-subtitle">Recent Sessions</h3>
+              <div class="sessions-table-wrap">
+                <table class="sessions-table">
+                  <thead>
+                    <tr>
+                      <th>Started</th>
+                      <th>Grid</th>
+                      <th>Difficulty</th>
+                      <th>Result</th>
+                      <th>Time</th>
+                      <th>Moves</th>
+                    </tr>
+                  </thead>
+                  <tbody id="sessionsTbody"></tbody>
+                </table>
+              </div>
+            </div>
           </div>
-        </section>
 
+          <div id="progressUpdatedAt" class="progress-updated"></div>
         </div>
       </div>
     </section>
 
-    <section class="progress" aria-label="Progress tracking">
-        <div class="progress-card">
-          <div class="progress-header">
-            <h2 class="progress-title">Progress</h2>
-            <button id="progressRefreshBtn" class="progress-refresh" type="button">Refresh</button>
-          </div>
-
-          <div id="progressLoggedOut" class="progress-loggedout">
-            Log in to track wins, personal bests, achievements, and story progress.
-          </div>
-
-          <div id="progressContent" class="progress-content" hidden>
-            <div class="progress-metrics">
-              <div class="metric">
-                <div class="metric-label">Wins</div>
-                <div id="statWins" class="metric-value">—</div>
-              </div>
-              <div class="metric">
-                <div class="metric-label">Sessions</div>
-                <div id="statSessions" class="metric-value">—</div>
-              </div>
-              <div class="metric">
-                <div class="metric-label">Best Time</div>
-                <div id="statBestTime" class="metric-value">—</div>
-              </div>
-              <div class="metric">
-                <div class="metric-label">Best Moves</div>
-                <div id="statBestMoves" class="metric-value">—</div>
-              </div>
-              <div class="metric">
-                <div class="metric-label">Story Stage</div>
-                <div id="statStoryStage" class="metric-value">—</div>
-              </div>
-              <div class="metric">
-                <div class="metric-label">Puzzles Solved</div>
-                <div id="statSolved" class="metric-value">—</div>
-              </div>
-            </div>
-
-            <div class="progress-grid">
-              <div class="progress-panel">
-                <h3 class="progress-subtitle">Achievements</h3>
-                <ul id="achievementsList" class="achievements-list"></ul>
-              </div>
-
-              <div class="progress-panel">
-                <h3 class="progress-subtitle">Recent Sessions</h3>
-                <div class="sessions-table-wrap">
-                  <table class="sessions-table">
-                    <thead>
-                      <tr>
-                        <th>Started</th>
-                        <th>Grid</th>
-                        <th>Difficulty</th>
-                        <th>Result</th>
-                        <th>Time</th>
-                        <th>Moves</th>
-                      </tr>
-                    </thead>
-                    <tbody id="sessionsTbody"></tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-
-            <div id="progressUpdatedAt" class="progress-updated"></div>
-          </div>
-        </div>
-      </section>
 
     <canvas id="confettiCanvas" class="confetti-canvas" aria-hidden="true"></canvas>
 
