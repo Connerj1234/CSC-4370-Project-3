@@ -24,23 +24,31 @@ function applyTimeOfDayTheme() {
 }
 
 async function refreshAuthUI() {
-    const res = await API.me();
+    let user = null;
+    try {
+      const res = await API.me();
+      user = res && res.ok ? res.user : null;
+    } catch (_) {
+      user = null;
+    }
+
+    window.__currentUser = user;
 
     const greetingEl = document.getElementById("userGreeting");
-    const authBtnEl = document.getElementById("authButton"); // login/register button
-    const logoutBtnEl = document.getElementById("logoutButton"); // logout button (if you have one)
-
-    const user = res && res.ok ? res.user : null;
-
     if (greetingEl) {
       greetingEl.textContent = user
         ? `Welcome: ${user.display_name || user.email || "User"}`
         : "Welcome: Guest";
     }
 
-    // Toggle buttons if you have both
-    if (authBtnEl) authBtnEl.style.display = user ? "none" : "inline-flex";
-    if (logoutBtnEl) logoutBtnEl.style.display = user ? "inline-flex" : "none";
+    // Auth button label (modal logic will handle open/close)
+    const authBtnEl = document.getElementById("authBtn");
+    if (authBtnEl) authBtnEl.textContent = user ? "Logout" : "Login";
+
+    // Update progress panel, if game has been created
+    if (window.__game && typeof window.__game.refreshProgressUI === "function") {
+      window.__game.refreshProgressUI();
+    }
 
     return user;
   }
@@ -64,6 +72,26 @@ class SantaPuzzleGame {
     this.moveSound = options.moveSound;
     this.bgMusic = options.bgMusic;
     this.winSound = options.winSound;
+
+    // Progress / Insights UI
+    this.progressRefreshBtn = document.getElementById("progressRefreshBtn");
+    this.progressLoggedOutEl = document.getElementById("progressLoggedOut");
+    this.progressContentEl = document.getElementById("progressContent");
+    this.progressUpdatedAtEl = document.getElementById("progressUpdatedAt");
+
+    this.statWinsEl = document.getElementById("statWins");
+    this.statSessionsEl = document.getElementById("statSessions");
+    this.statBestTimeEl = document.getElementById("statBestTime");
+    this.statBestMovesEl = document.getElementById("statBestMoves");
+    this.statStoryStageEl = document.getElementById("statStoryStage");
+    this.statSolvedEl = document.getElementById("statSolved");
+
+    this.achievementsListEl = document.getElementById("achievementsList");
+    this.sessionsTbodyEl = document.getElementById("sessionsTbody");
+
+    if (this.progressRefreshBtn) {
+      this.progressRefreshBtn.addEventListener("click", () => this.refreshProgressUI(true));
+    }
 
     this.isRunning = false;
 
@@ -422,6 +450,145 @@ class SantaPuzzleGame {
     } finally {
       this.sessionId = null;
       this.sessionPuzzleId = null;
+    }
+  }
+
+  formatDuration(seconds) {
+    if (seconds === null || seconds === undefined) return "—";
+    const s = Math.max(0, Number(seconds) || 0);
+    const m = Math.floor(s / 60);
+    const r = s % 60;
+    if (m <= 0) return `${r}s`;
+    return `${m}m ${String(r).padStart(2, "0")}s`;
+  }
+
+  formatDateTime(dtStr) {
+    if (!dtStr) return "—";
+    // Works with MariaDB DATETIME strings like "2025-12-13 14:42:40"
+    const iso = dtStr.replace(" ", "T") + "Z";
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return dtStr;
+    return d.toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  }
+
+  setProgressLoggedOut() {
+    if (this.progressLoggedOutEl) this.progressLoggedOutEl.hidden = false;
+    if (this.progressContentEl) this.progressContentEl.hidden = true;
+    if (this.progressUpdatedAtEl) this.progressUpdatedAtEl.textContent = "";
+  }
+
+  renderInsights(insightsPayload) {
+    const ins = insightsPayload && (insightsPayload.insights || insightsPayload);
+
+    const totals = ins?.totals || {};
+    const bests = ins?.personal_bests || {};
+    const story = ins?.story || {};
+    const achievements = ins?.achievements || [];
+    const recent = ins?.recent_sessions || [];
+
+    if (this.statWinsEl) this.statWinsEl.textContent = String(totals.wins ?? "0");
+    if (this.statSessionsEl) this.statSessionsEl.textContent = String(totals.sessions ?? "0");
+
+    if (this.statBestTimeEl) {
+      this.statBestTimeEl.textContent =
+        bests.best_time_s === null || bests.best_time_s === undefined
+          ? "—"
+          : this.formatDuration(bests.best_time_s);
+    }
+
+    if (this.statBestMovesEl) {
+      this.statBestMovesEl.textContent =
+        bests.best_moves === null || bests.best_moves === undefined ? "—" : String(bests.best_moves);
+    }
+
+    if (this.statStoryStageEl) this.statStoryStageEl.textContent = String(story.story_stage ?? "1");
+    if (this.statSolvedEl) this.statSolvedEl.textContent = String(story.puzzles_solved_total ?? "0");
+
+    // Achievements list
+    if (this.achievementsListEl) {
+      this.achievementsListEl.innerHTML = "";
+      if (!achievements.length) {
+        const li = document.createElement("li");
+        li.className = "achievement-item";
+        li.innerHTML = `<div class="achievement-title">No achievements yet</div>
+                        <div class="achievement-desc">Win a puzzle to earn your first badge.</div>`;
+        this.achievementsListEl.appendChild(li);
+      } else {
+        achievements.slice(0, 8).forEach((a) => {
+          const li = document.createElement("li");
+          li.className = "achievement-item";
+          const awarded = a.awarded_at ? this.formatDateTime(a.awarded_at) : "";
+          li.innerHTML = `
+            <div class="achievement-title">${a.title || a.code}</div>
+            <div class="achievement-desc">${a.description || ""}</div>
+            ${awarded ? `<div class="achievement-meta">Awarded: ${awarded}</div>` : ""}
+          `;
+          this.achievementsListEl.appendChild(li);
+        });
+      }
+    }
+
+    // Recent sessions
+    if (this.sessionsTbodyEl) {
+      this.sessionsTbodyEl.innerHTML = "";
+      if (!recent.length) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="6" style="color: var(--muted); padding: 10px 8px;">No sessions yet.</td>`;
+        this.sessionsTbodyEl.appendChild(tr);
+      } else {
+        recent.forEach((s) => {
+          const tr = document.createElement("tr");
+          const started = this.formatDateTime(s.started_at);
+          const grid = `${s.grid_size}×${s.grid_size}`;
+          const diff = `L${s.difficulty_level ?? 1}`;
+          const resultPill =
+            Number(s.completed) === 1
+              ? `<span class="pill success">Win</span>`
+              : `<span class="pill fail">Incomplete</span>`;
+          const time = s.completion_time_s == null ? "—" : this.formatDuration(s.completion_time_s);
+          const moves = s.moves_count == null ? "—" : String(s.moves_count);
+
+          tr.innerHTML = `
+            <td>${started}</td>
+            <td>${grid}</td>
+            <td>${diff}</td>
+            <td>${resultPill}</td>
+            <td>${time}</td>
+            <td>${moves}</td>
+          `;
+          this.sessionsTbodyEl.appendChild(tr);
+        });
+      }
+    }
+
+    if (this.progressLoggedOutEl) this.progressLoggedOutEl.hidden = true;
+    if (this.progressContentEl) this.progressContentEl.hidden = false;
+
+    if (this.progressUpdatedAtEl) {
+      const last = story.last_updated_at ? this.formatDateTime(story.last_updated_at) : null;
+      this.progressUpdatedAtEl.textContent = last ? `Story last updated: ${last}` : "";
+    }
+  }
+
+  async refreshProgressUI(showToast = false) {
+    // Only meaningful for logged in users
+    if (!window.__currentUser) {
+      this.setProgressLoggedOut();
+      return;
+    }
+
+    try {
+      const data = await API.getInsights();
+      this.renderInsights(data);
+
+      if (showToast && this.progressUpdatedAtEl) {
+        // Small feedback without adding new UI elements
+        const now = new Date();
+        const stamp = now.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+        this.progressUpdatedAtEl.textContent = `Updated: ${stamp}`;
+      }
+    } catch (err) {
+      console.warn("Failed to load insights:", err);
     }
   }
 
@@ -1380,6 +1547,8 @@ document.addEventListener("DOMContentLoaded", () => {
   game.init();
   window.__SANTA_GAME__ = game;
   // Populate story panel on load (if present)
+  window.__game = game;
+  game.refreshProgressUI();
   game.refreshStoryPanel();
 
   // Auth UI (login/register/logout) - optional for playing, required for DB tracking later

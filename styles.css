@@ -712,6 +712,7 @@
   /* Right column stack: Power-ups above Story Mode */
   .side-panel{
     display: flex;
+    width: 350px;
     flex-direction: column;
     gap: 18px;
   }
