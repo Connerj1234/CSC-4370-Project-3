@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../db.php';
 require_once __DIR__ . '/../auth.php';
+require_once __DIR__ . '/../response.php';
 
 $userId = require_login();
 $body = read_json_body();
@@ -13,35 +14,41 @@ if ($sessionId <= 0) {
 }
 
 $moves = (int)($body['moves_count'] ?? 0);
-$time = (int)($body['time_seconds'] ?? 0);
-$difficultyEnd = (int)($body['difficulty_end'] ?? 1);
+$difficultyLevel = (int)($body['difficulty_level'] ?? 1);
+$magicUsed = (int)($body['magic_used'] ?? 0);
 
-$magicUsed = (int)($body['magic_used_count'] ?? 0);
-$freezeUsed = (int)($body['freeze_used_count'] ?? 0);
-$swapUsed = (int)($body['swap_used_count'] ?? 0);
-$insightUsed = (int)($body['insight_used_count'] ?? 0);
+$powerupsUsed = $body['powerups_used'] ?? null;   // object or JSON string
+$finalState   = $body['final_state'] ?? null;    // array or JSON string
+
+$powerupsJson = null;
+if ($powerupsUsed !== null) {
+  $powerupsJson = is_string($powerupsUsed) ? $powerupsUsed : json_encode($powerupsUsed);
+  if (json_decode((string)$powerupsJson, true) === null) $powerupsJson = null;
+}
+
+$finalJson = null;
+if ($finalState !== null) {
+  $finalJson = is_string($finalState) ? $finalState : json_encode($finalState);
+  if (json_decode((string)$finalJson, true) === null) $finalJson = null;
+}
 
 $stmt = $pdo->prepare(
   'UPDATE game_sessions
    SET moves_count = :m,
-       time_seconds = :t,
-       difficulty_end = :de,
-       magic_used_count = :mu,
-       freeze_used_count = :fu,
-       swap_used_count = :su,
-       insight_used_count = :iu
+       difficulty_level = :dl,
+       magic_used = :mu,
+       powerups_used = :pu,
+       final_state = :fs
    WHERE id = :sid AND user_id = :uid
    LIMIT 1'
 );
 
 $stmt->execute([
   ':m' => max(0, $moves),
-  ':t' => max(0, $time),
-  ':de' => max(1, $difficultyEnd),
+  ':dl' => max(1, $difficultyLevel),
   ':mu' => max(0, $magicUsed),
-  ':fu' => max(0, $freezeUsed),
-  ':su' => max(0, $swapUsed),
-  ':iu' => max(0, $insightUsed),
+  ':pu' => $powerupsJson,
+  ':fs' => $finalJson,
   ':sid' => $sessionId,
   ':uid' => $userId
 ]);

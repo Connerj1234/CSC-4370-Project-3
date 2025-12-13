@@ -126,6 +126,76 @@
         </aside>
       </div>
     </section>
+    <section class="progress" aria-label="Progress tracking">
+      <div class="progress-card">
+        <div class="progress-header">
+          <h2 class="progress-title">Progress</h2>
+          <button id="progressRefreshBtn" class="progress-refresh" type="button">Refresh</button>
+        </div>
+
+        <div id="progressLoggedOut" class="progress-loggedout">
+          Log in to track wins, personal bests, achievements, and story progress.
+        </div>
+
+        <div id="progressContent" class="progress-content" hidden>
+          <div class="progress-metrics">
+            <div class="metric">
+              <div class="metric-label">Wins</div>
+              <div id="statWins" class="metric-value">—</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Sessions</div>
+              <div id="statSessions" class="metric-value">—</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Best Time</div>
+              <div id="statBestTime" class="metric-value">—</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Best Moves</div>
+              <div id="statBestMoves" class="metric-value">—</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Story Stage</div>
+              <div id="statStoryStage" class="metric-value">—</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Puzzles Solved</div>
+              <div id="statSolved" class="metric-value">—</div>
+            </div>
+          </div>
+
+          <div class="progress-grid">
+            <div class="progress-panel">
+              <h3 class="progress-subtitle">Achievements</h3>
+              <ul id="achievementsList" class="achievements-list"></ul>
+            </div>
+
+            <div class="progress-panel">
+              <h3 class="progress-subtitle">Recent Sessions</h3>
+              <div class="sessions-table-wrap">
+                <table class="sessions-table">
+                  <thead>
+                    <tr>
+                      <th>Started</th>
+                      <th>Grid</th>
+                      <th>Difficulty</th>
+                      <th>Result</th>
+                      <th>Time</th>
+                      <th>Moves</th>
+                    </tr>
+                  </thead>
+                  <tbody id="sessionsTbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div id="progressUpdatedAt" class="progress-updated"></div>
+        </div>
+      </div>
+    </section>
+
 
     <canvas id="confettiCanvas" class="confetti-canvas" aria-hidden="true"></canvas>
 
