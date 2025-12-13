@@ -1,0 +1,586 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review for Grading Criteria - Christmas Fifteen Puzzle Project</title>
+    <style>
+        /* CSS Variables for Christmas theming */
+        :root {
+            --primary: #d32f2f; /* Darker Red */
+            --primary-light: #e57373;
+            --primary-dark: #b71c1c;
+            --secondary: #2e7d32; /* Dark Green */
+            --secondary-light: #4caf50;
+            --accent: #ffc107; /* Amber/Gold */
+            --warning: #ff9800; /* Orange */
+            --success: #4caf50; /* Light Green */
+            --purple: #7b1fa2; /* Deep Purple */
+            --dark: #121212;
+            --darker: #0a0a0a;
+            --light-bg: #f5f5f5;
+            --text-light: #e0e0e0;
+            --text-lighter: #ffffff;
+            --card-bg: #1e1e1e;
+            --card-border: #333;
+            --code-bg: #2a2a2a;
+            --highlight-border: #f1c40f;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s ease;
+        }
+
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-light);
+            background: linear-gradient(135deg, var(--darker), #1a1a2e);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            color: var(--text-lighter);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: 2rem;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            color: var(--text-lighter);
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        ul, ol {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Header styles */
+        header {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            border-radius: 0 0 20px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path fill="rgba(255,255,255,0.1)" d="M50 0 L60 35 L95 35 L65 55 L75 90 L50 70 L25 90 L35 55 L5 35 L40 35 Z"/></svg>');
+            background-size: 80px 80px;
+            opacity: 0.1;
+        }
+
+        header h1 {
+            color: white;
+            font-size: 2.8rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--card-bg);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: var(--text-lighter);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 1.5rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-light);
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--accent);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Main content */
+        main {
+            padding: 2rem 0;
+        }
+
+        section {
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+            border: 1px solid var(--card-border);
+            border-left: 4px solid var(--primary);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .card h3 {
+            display: flex;
+            align-items: center;
+        }
+
+        .card h3::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent);
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .highlight-box {
+            background-color: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .graduate-note {
+            background-color: rgba(123, 31, 162, 0.2);
+            border-left: 4px solid var(--purple);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-note {
+            background-color: rgba(255, 152, 0, 0.2);
+            border-left: 4px solid var(--warning);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* Role cards */
+        .roles-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .role-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            transition: var(--transition);
+            border-top: 4px solid var(--primary);
+            border: 1px solid var(--card-border);
+        }
+
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .role-card h4 {
+            color: var(--text-lighter);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .role-card h4::before {
+            content: '✓';
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background-color: var(--accent);
+            color: var(--dark);
+            border-radius: 50%;
+            margin-right: 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--darker);
+            color: var(--text-light);
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 3rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Christmas-themed back link */
+        .christmas-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 18px;
+            background: linear-gradient(90deg, var(--secondary) 0%, var(--primary) 100%);
+            color: #fff;
+            border-radius: 10px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 8px 28px rgba(2,6,23,0.6);
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .christmas-link .icon {
+            font-size: 1.05rem;
+            line-height: 1;
+        }
+
+        .christmas-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 36px rgba(2,6,23,0.7);
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            color: #fff;
+        }
+
+        .christmas-link:focus {
+            outline: 3px solid rgba(255,255,255,0.08);
+            outline-offset: 3px;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+            }
+
+            .nav-links {
+                margin-top: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .nav-links li {
+                margin-left: 1rem;
+                margin-right: 1rem;
+                margin-bottom: 0.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Christmas-themed back link -->
+    <div class="container" style="margin-top: 20px;">
+        <a href="IndexP3.html" class="christmas-link" aria-label="Back to Christmas Puzzle Project">
+            <span class="icon" aria-hidden="true">🎄</span>
+            <span>Back to Christmas Puzzle Project</span>
+        </a>
+    </div>
+
+    <header>
+        <div class="container">
+            <h1>🎅 Christmas Fifteen Puzzle Project</h1>
+            <p>Review the grading criteria and requirements for your holiday-themed web development project</p>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container nav-container">
+            <div class="logo">Grading Criteria</div>
+            <ul class="nav-links">
+                <li><a href="#technical-goal">Technical Requirements</a></li>
+                <li><a href="#team-process">Team Process</a></li>
+                <li><a href="#deliverables">Final Deliverables</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section id="introduction">
+            <div class="card">
+                <p>This document outlines the grading criteria and requirements for your Christmas Fifteen Puzzle Project. Follow these guidelines to ensure your project meets all expectations.</p>
+            </div>
+        </section>
+
+        <section id="technical-goal">
+            <h2>Part 1: Technical Requirements</h2>
+
+            <div class="card">
+                <p>Your Christmas Fifteen Puzzle must include the following core technical features:</p>
+
+                <ul>
+                    <li><strong>Three Puzzle Versions:</strong> Implement all three themed versions (Santa's Workshop, Reindeer Games, Elf AI Workshop) with unique mechanics for each.</li>
+                    <li><strong>Database Integration:</strong> Use MySQL with proper schema design, security measures, and performance optimization.</li>
+                    <li><strong>User Authentication:</strong> A secure system for users to register, log in, and manage profiles.</li>
+                    <li><strong>Responsive Design:</strong> Ensure the application works seamlessly across different devices and screen sizes.</li>
+                    <li><strong>Game Analytics:</strong> Track user sessions, puzzle completion times, moves, and performance metrics.</li>
+                </ul>
+
+                <div class="warning-note">
+                    <h3>⚠️ Database Development Constraint</h3>
+                    <p>Students are <strong>PROHIBITED</strong> from using GUI database management tools like MySQL Workbench or phpMyAdmin. You must use command-line interfaces or direct database connections through your server-side code.</p>
+                </div>
+
+                <div class="graduate-note">
+                    <h3>🎓 For Graduate Students</h3>
+                    <p>You must complete <strong>6 custom features</strong> with increased complexity, including advanced social features, predictive analytics, and interactive Christmas story mode with branching narratives.</p>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>Undergraduate Requirements</h3>
+                    <p>Complete <strong>4 custom features</strong> from the balanced feature set, including festive theme system, gift & reward system, holiday magic power-ups, and Christmas story mode.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="team-process">
+            <h2>Part 2: Team Process & Methodology</h2>
+
+            <div class="card">
+                <p>All team members will share responsibility for the following roles throughout the project lifecycle.</p>
+
+                <div class="highlight-box">
+                    <h3>🎄 Team Roles & Responsibilities</h3>
+                </div>
+
+                <div class="roles-container">
+                    <div class="role-card">
+                        <h4>DESIGNERS (Everyone)</h4>
+                        <ul>
+                            <li>Collaboratively define final project requirements and specifications</li>
+                            <li>Create user interface mockups and wireframes for all three puzzle versions</li>
+                            <li>Design the application architecture and database schema</li>
+                            <li>Write pseudocode for complex algorithms and game mechanics</li>
+                        </ul>
+                    </div>
+
+                    <div class="role-card">
+                        <h4>PROGRAMMERS (Everyone)</h4>
+                        <ul>
+                            <li>Collaboratively implement the frontend and backend code</li>
+                            <li>Ensure code quality, consistency, and proper documentation</li>
+                            <li>Implement security measures and performance optimizations</li>
+                            <li>Integrate all components into a cohesive application</li>
+                        </ul>
+                    </div>
+
+                    <div class="role-card">
+                        <h4>TESTERS (Everyone)</h4>
+                        <ul>
+                            <li>Develop comprehensive test plans with specific procedures</li>
+                            <li>Track, report, and prioritize bugs using issue tracking</li>
+                            <li>Perform cross-browser and cross-device compatibility testing</li>
+                            <li>Gather feedback for final presentation and documentation</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>📋 Required Agile Methodology</h3>
+                </div>
+
+                <p>You are required to use Kanban or Scrum framework to manage your project development.</p>
+
+                <ul>
+                    <li><strong>Regular Stand-ups:</strong> Your team must meet at least every two days to sync progress</li>
+                    <li><strong>Sprint Planning:</strong> In each meeting, define specific tasks for the next development cycle</li>
+                    <li><strong>Documentation:</strong> Maintain meeting logs and progress tracking for your final presentation</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <h4>Presentation Requirement:</h4>
+                    <p>Your final presentation must include a dedicated section explaining:</p>
+                    <ul>
+                        <li>How your team implemented Scrum/Kanban methodology</li>
+                        <li>Specific benefits this approach provided for your project</li>
+                        <li>Challenges faced and how you overcame them</li>
+                    </ul>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>💬 Project Planning & Communication</h3>
+                </div>
+
+                <h4>Development Schedule</h4>
+                <p>As a team, create a detailed project schedule estimating hours needed for each phase (Design, Implementation, Testing, Deployment).</p>
+
+                <h4>Communication Plan</h4>
+                <ul>
+                    <li><strong>Primary Tool:</strong> Use Discord or similar platform for all team communication</li>
+                    <li><strong>Coordination:</strong> Establish clear protocols for using class time and coordinating outside of class</li>
+                    <li><strong>Instructor Support:</strong> Utilize class time for collaborative work and seek instructor guidance via email or in person</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="deliverables">
+            <h2>Part 3: Final Deliverables</h2>
+
+            <div class="card">
+                <div class="highlight-box">
+                    <h3>🎤 The Presentation (20-25 minutes)</h3>
+                </div>
+
+                <p>Your team presentation must include the following components:</p>
+
+                <ul>
+                    <li><strong>Project Introduction:</strong> Explain the Christmas Fifteen Puzzle concept and the problem you're solving</li>
+                    <li><strong>Design Overview:</strong>
+                        <ul>
+                            <li>Show your UI/UX designs and mockups</li>
+                            <li>Explain your application architecture and database design</li>
+                            <li>Demonstrate key algorithms and game mechanics</li>
+                            <li>Highlight the technical implementation of your chosen version</li>
+                        </ul>
+                    </li>
+                    <li><strong>Development Process:</strong> Explain your team's workflow, challenges faced, and solutions implemented</li>
+                    <li><strong>Testing Methodology:</strong> Describe your testing approach, including test procedures, data, and bug tracking</li>
+                    <li><strong>Live Demonstration:</strong> Showcase a working version of your application with all key features</li>
+                    <li><strong>Code Repository:</strong> Present your GitHub repository with proper documentation</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <h4>Teamwork Requirements:</h4>
+                    <p>All team members must contribute meaningfully to the presentation. You can alternate speakers or have dedicated presenters for different sections.</p>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>📹 Video Recording & Submission</h3>
+                </div>
+
+                <ul>
+                    <li><strong>Recording:</strong> Use Zoom, Teams, or similar platform to record your team's presentation</li>
+                    <li><strong>Upload:</strong> Create a (public or unlisted) YouTube video of your presentation</li>
+                    <li><strong>Submission:</strong> Submit the YouTube video link to the designated course dropbox</li>
+                    <li><strong>Code Submission:</strong> Each team member must individually submit the final project code to receive a grade</li>
+                </ul>
+
+                <div class="warning-note">
+                    <h3>🎅 Presentation & Defense Requirements</h3>
+                    <p>All projects will include a live demonstration and code walkthrough where you must explain your implementation decisions and defend your architectural choices. This ensures deep understanding of your code.</p>
+                    <p><strong>Key Focus Areas:</strong></p>
+                    <ul>
+                        <li>Provide detailed code explanation of your implementation</li>
+                        <li>Execute a live, functional demo showing all integrated components</li>
+                        <li>Explain database design and security implementations</li>
+                        <li>Demonstrate responsive design and cross-browser compatibility</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Christmas Fifteen Puzzle Project &copy; 2025 Holiday Edition</p>
+            <p>Team collaboration and adherence to these guidelines are essential for success!</p>
+        </div>
+    </footer>
+</body>
+</html>

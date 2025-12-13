@@ -7,7 +7,7 @@ require_once __DIR__ . '/response.php';
 $DB_HOST = 'localhost';
 $DB_NAME = 'cjamison6';
 $DB_USER = 'cjamison6';
-$DB_PASS = 'ChickenSandwich123!';
+$DB_PASS = 'cjamison6';
 
 try {
   $pdo = new PDO(

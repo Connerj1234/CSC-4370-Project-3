@@ -23,6 +23,28 @@ function applyTimeOfDayTheme() {
   window.setTimeout(() => this.applyTimeOfDayTheme(), Math.max(1_000, msToNextHour));
 }
 
+async function refreshAuthUI() {
+    const res = await API.me();
+
+    const greetingEl = document.getElementById("userGreeting");
+    const authBtnEl = document.getElementById("authButton"); // login/register button
+    const logoutBtnEl = document.getElementById("logoutButton"); // logout button (if you have one)
+
+    const user = res && res.ok ? res.user : null;
+
+    if (greetingEl) {
+      greetingEl.textContent = user
+        ? `Welcome: ${user.display_name || user.email || "User"}`
+        : "Welcome: Guest";
+    }
+
+    // Toggle buttons if you have both
+    if (authBtnEl) authBtnEl.style.display = user ? "none" : "inline-flex";
+    if (logoutBtnEl) logoutBtnEl.style.display = user ? "inline-flex" : "none";
+
+    return user;
+  }
+
 class SantaPuzzleGame {
   constructor(options) {
     this.gridEl = options.gridEl;
@@ -1040,6 +1062,7 @@ class SantaPuzzleGame {
 
 document.addEventListener("DOMContentLoaded", () => {
   applyTimeOfDayTheme();
+  refreshAuthUI();
 
   const game = new SantaPuzzleGame({
     gridEl: document.getElementById("grid"),
@@ -1083,4 +1106,167 @@ document.addEventListener("DOMContentLoaded", () => {
 
   game.init();
   window.__SANTA_GAME__ = game;
+
+  // Auth UI (login/register/logout) - optional for playing, required for DB tracking later
+  setupAuthUI();
 });
+
+
+/* =========================
+   Auth Modal UI (frontend)
+   ========================= */
+
+let __authMode = "login"; // "login" | "register"
+let __currentUser = null;
+
+function setupAuthUI() {
+  const authBtn = document.getElementById("authBtn");
+  const modal = document.getElementById("authModal");
+  const closeBtn = document.getElementById("authCloseBtn");
+
+  const title = document.getElementById("authTitle");
+  const form = document.getElementById("authForm");
+  const nameWrap = document.getElementById("authNameWrap");
+  const nameInput = document.getElementById("authName");
+  const emailInput = document.getElementById("authEmail");
+  const pwInput = document.getElementById("authPassword");
+  const submitBtn = document.getElementById("authSubmitBtn");
+  const helper = document.getElementById("authHelper");
+  const switchBtn = document.getElementById("switchAuthModeBtn");
+  const errorEl = document.getElementById("authError");
+  const togglePwBtn = document.getElementById("togglePwBtn");
+
+  if (!authBtn || !modal) return;
+
+  function showError(msg) {
+    if (!errorEl) return;
+    errorEl.textContent = msg;
+    errorEl.style.display = msg ? "block" : "none";
+  }
+
+  function openModal(mode) {
+    __authMode = mode || "login";
+    showError("");
+    syncModeUI();
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    // focus first input
+    setTimeout(() => {
+      if (__authMode === "register" && nameInput) nameInput.focus();
+      else if (emailInput) emailInput.focus();
+    }, 0);
+  }
+
+  function closeModal() {
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    showError("");
+    if (pwInput) pwInput.value = "";
+  }
+
+  function setButtonLoggedOut() {
+    authBtn.textContent = "Login";
+    authBtn.dataset.state = "logged_out";
+  }
+
+  function setButtonLoggedIn() {
+    authBtn.textContent = "Logout";
+    authBtn.dataset.state = "logged_in";
+  }
+
+  function syncModeUI() {
+    const isRegister = __authMode === "register";
+    if (title) title.textContent = isRegister ? "Create Account" : "Login";
+    if (submitBtn) submitBtn.textContent = isRegister ? "Create Account" : "Login";
+    if (nameWrap) nameWrap.style.display = isRegister ? "flex" : "none";
+
+    if (helper) {
+      helper.innerHTML = isRegister
+        ? `Already have an account? <button id="switchAuthModeBtn" class="link-btn" type="button">Login</button>`
+        : `Don’t have an account? <button id="switchAuthModeBtn" class="link-btn" type="button">Create Account</button>`;
+      // rebind switch button because we replaced innerHTML
+      const newSwitchBtn = document.getElementById("switchAuthModeBtn");
+      if (newSwitchBtn) {
+        newSwitchBtn.addEventListener("click", () => {
+          __authMode = isRegister ? "login" : "register";
+          syncModeUI();
+          showError("");
+        });
+      }
+    }
+  }
+
+  async function refreshMe() {
+    const res = await API.me();
+    __currentUser = res.user || null;
+    if (__currentUser) setButtonLoggedIn();
+    else setButtonLoggedOut();
+  }
+
+  authBtn.addEventListener("click", async () => {
+    const state = authBtn.dataset.state;
+    if (state === "logged_in") {
+      await API.logout();
+      __currentUser = null;
+      setButtonLoggedOut();
+      await refreshAuthUI();
+      return;
+    }
+    openModal("login");
+  });
+
+  if (closeBtn) closeBtn.addEventListener("click", closeModal);
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modal.classList.contains("is-open")) closeModal();
+  });
+
+  if (togglePwBtn && pwInput) {
+    togglePwBtn.addEventListener("click", () => {
+      const isPw = pwInput.type === "password";
+      pwInput.type = isPw ? "text" : "password";
+      togglePwBtn.textContent = isPw ? "🙈" : "👁";
+      togglePwBtn.setAttribute("aria-label", isPw ? "Hide password" : "Show password");
+    });
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    showError("");
+
+    const email = (emailInput?.value || "").trim();
+    const password = pwInput?.value || "";
+    const name = (nameInput?.value || "").trim();
+
+    if (!email || !password) {
+      showError("Please enter an email and password.");
+      return;
+    }
+    if (__authMode === "register" && !name) {
+      showError("Please enter a name.");
+      return;
+    }
+
+    try {
+      if (__authMode === "register") {
+        const reg = await API.register({ name, email, password });
+        if (!reg.ok) throw new Error(reg.error || "Registration failed.");
+      }
+
+      const log = await API.login({ email, password });
+      if (!log.ok) throw new Error(log.error || "Login failed.");
+
+      __currentUser = log.user || (await API.me()).user || null;
+      setButtonLoggedIn();
+      refreshAuthUI();
+      closeModal();
+    } catch (err) {
+      showError(err?.message || "Something went wrong.");
+    }
+  });
+
+  // initial state
+  refreshMe();
+}

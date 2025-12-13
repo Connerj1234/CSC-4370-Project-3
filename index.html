@@ -5,16 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Santa’s Workshop Puzzle</title>
   <link rel="stylesheet" href="styles.css" />
-  <script src="puzzle.js" defer></script>
+  <script src="api.js" defer></script>
+    <script src="puzzle.js" defer></script>
 </head>
 
 <body>
   <header class="container">
     <div class="title-row">
       <h1>🎅 Santa’s Workshop Fifteen Puzzle</h1>
+
+      <div class="auth-area">
+        <button id="authBtn" class="auth-btn" type="button">Login</button>
+      </div>
+    </div>
+
+    <div class="subtitle-row">
+        <div id="userGreeting" class="user-greeting">Welcome: Guest</div>
       <span id="themeBadge" class="theme-badge">Theme: —</span>
     </div>
-    <p class="subtitle">Slide the tiles to rebuild the image.</p>
   </header>
 
   <main class="container">
@@ -132,5 +140,44 @@
 <audio id="moveSound" preload="auto" src="sounds/tile.mp3"></audio>
 <audio id="bgMusic" preload="auto" loop src="sounds/background.mp3"></audio>
 <audio id="winSound" preload="auto" src="sounds/win.mp3"></audio>
+
+  <!-- Auth Modal (Login / Create Account) -->
+  <div id="authModal" class="modal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <button id="authCloseBtn" class="modal-close" type="button" aria-label="Close">×</button>
+
+      <h2 id="authTitle" class="modal-title">Login</h2>
+
+      <form id="authForm" class="auth-form" autocomplete="on">
+        <div id="authNameWrap" class="field" style="display:none;">
+          <label for="authName">Name</label>
+          <input id="authName" name="name" type="text" placeholder="Your name" />
+        </div>
+
+        <div class="field">
+          <label for="authEmail">Email Address</label>
+          <input id="authEmail" name="email" type="email" placeholder="you@example.com" required />
+        </div>
+
+        <div class="field">
+          <label for="authPassword">Password</label>
+          <div class="password-wrap">
+            <input id="authPassword" name="password" type="password" placeholder="••••••••" required />
+            <button id="togglePwBtn" class="pw-toggle" type="button" aria-label="Show password">👁</button>
+          </div>
+        </div>
+
+        <button id="authSubmitBtn" class="modal-primary" type="submit">Login</button>
+
+        <p id="authHelper" class="auth-helper">
+          Don’t have an account?
+          <button id="switchAuthModeBtn" class="link-btn" type="button">Create Account</button>
+        </p>
+
+        <p id="authError" class="auth-error" style="display:none;"></p>
+      </form>
+    </div>
+  </div>
+
 </body>
 </html>

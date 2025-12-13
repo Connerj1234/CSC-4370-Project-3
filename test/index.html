@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Christmas Fifteen Puzzle Project # 03 - Three Challenging Versions</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="puzzle.js" defer></script>
+
+</head>
+
+
+<body>
+    <!-- Navigation Arrows -->
+    <div class="nav-arrows">
+        <button class="nav-arrow" id="scrollUp" title="Scroll to top">↑</button>
+        <button class="nav-arrow" id="scrollDown" title="Scroll to bottom">↓</button>
+    </div>
+
+<header>
+    <div class="container">
+        <h1>🎄 Christmas Fifteen Puzzle <br/>Web Pro Final Project #03</h1>
+        <p class="subtitle">2025 Holiday Edition - Three Festive Challenging Versions</p>
+
+        <!-- Important Dates - Moved inside container and improved layout -->
+        <div class="dates-banner">
+            <h2>🎯 CRITICAL PROJECT DEADLINES - CHOOSE YOUR VERSION NOW!</h2>
+            <div class="dates-flex">
+                <div class="date-item">
+                    <strong>PROPOSAL DUE: November 28, 2025</strong>
+                    <div>Submit your selected version choice by 11:59 PM</div>
+                </div>
+                <div class="date-item">
+                    <strong>FINAL PROJECT: December 14, 2025</strong>
+                    <div>Complete implementation of your chosen version</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <main class="container">
+        <section class="festive-info-block">
+            <h2>❄️ The Fifteen Puzzle: Simple Squares, Profound Challenge ❄️</h2>
+            <p>The Fifteen Puzzle, often called the Gem Puzzle or Mystic Square, is a deceptively simple sliding tile game that has captivated minds since its invention in the 1870s. It consists of a <strong>4×4 grid</strong> with 15 numbered square tiles and one empty space.</p>
+            <p><strong>The Challenge:</strong> The goal is straightforward—slide the tiles using the empty space to arrange them in numerical order.</p>
+            <p><strong>The Legacy:</strong> Despite its minimalist design, the puzzle is legendary because it introduces a profound mathematical twist: <em>not all starting configurations are solvable.</em> This core concept, proven by mathematicians shortly after its debut, elevates the Fifteen Puzzle from a mere toy to a fascinating exercise in logic and group theory. It stands as a timeless challenge, requiring both critical foresight and systematic execution to determine the correct sequence of moves needed to reach the elusive solved state.</p>
+        </section>
+
+        <section class="card">
+            <h2>Project Overview</h2>
+            <p>To Elevate your expertise with this premier holiday project: an advanced challenge requiring you to architect and deploy one of three distinct, festive versions of the Fifteen Puzzle while exercising some concepts using database integration, complex logic, and creative mastery.</p>
+            <p class="highlight">Your project must include a distinct theme and supporting imagery that accurately corresponds with your selected topic.</p>
+
+            <div class="tech-stack">
+                <div class="tech-item">JavaScript / React</div>
+                <div class="tech-item">HTML5 & CSS3</div>
+                <div class="tech-item">PHP / Node.js</div>
+                <div class="tech-item">MySQL Database</div>
+                <div class="tech-item">Basic API Design</div>
+                <div class="tech-item">Security Implementation</div>
+            </div>
+        </section>
+
+        <section class="warning-note">
+            <h3>⚠️ IMPORTANT DATABASE DEVELOPMENT CONSTRAINT</h3>
+            <p>Students are <strong>PROHIBITED</strong> from using GUI database management tools like MySQL Workbench, phpMyAdmin, or similar applications. You must use command-line interfaces or direct database connections through your server-side code.</p>
+            <p><strong>Allowed Tools:</strong> MySQL Command Line, PostgreSQL CLI, SQLite command-line tool, or direct database connections through your server-side code.</p>
+        </section>
+
+    <!-- Updated Project Resources & Guides Section -->
+<section class="resources-section">
+    <h2>📚 Project Resources & Guides</h2>
+
+    <div class="resources-grid">
+
+
+
+
+
+        <div class="resource-card">
+            <h3>Grading Criteria Review</h3>
+            <ul>
+                <li>Technical Requirements</li>
+                <li>Team Process Guidelines</li>
+                <li>Quality Standards</li>
+                <li>The Submission Process</li>
+            </ul>
+            <a href="Grading_Criterias_Review.html" class="resource-button" aria-label="View Grading Criteria">View Criteria</a>
+        </div>
+
+        <div class="resource-card">
+            <h3>Sprint Planning</h3>
+            <ul>
+                <li>Development Sprints</li>
+                <li>Project Timeline</li>
+                <li>Milestone Planning</li>
+                <li>Progress Tracking</li>
+            </ul>
+            <a href="Sprint_box.html" class="resource-button" aria-label="View Sprint Planning">View Sprints</a>
+        </div>
+
+        <div class="resource-card">
+            <h3>Grading Rubric</h3>
+            <ul>
+                <li>Checklist</li>
+                <li>Technical Implementation</li>
+                <li>Code Quality & Documentation</li>
+                <li>TA Grading Instructions</li>
+            </ul>
+            <a href="Grading_Rubric.html" class="resource-button" aria-label="View Implementation Guides">View Guides</a>
+        </div>
+    </div>
+</section>
+
+     <section class="fun-element">
+    <h2>Ready for a Festive Challenge? 🎅</h2>
+
+    <div class="duration-highlight">
+        <p><strong>🚨 ACTION REQUIRED:</strong> You must select ONE version to implement for your final project. Each version offers unique technical challenges and festive features that will showcase your coding skills!</p>
+        <p> Each version is designed to test different aspects of your development abilities, from adaptive gameplay mechanics to real-time multiplayer interactions and AI-driven enhancements. Choose wisely to align with your interests!! <br/> Please note my demo is generic - You will use images/Themes for all puzzle and not numbers as shown in my demo <a href="Demo.png" class="resource-button" aria-label="View Implementation Guides">Demo image sample</a> </p>
+    </div>
+
+    <div class="important-reminder">
+        <p><strong>📋 IMPORTANT:</strong> Review all three options carefully below and choose the version that best matches your technical interests and career objectives. Each includes a live demo to help you visualize your final product.</p> <p> You MUST implement all (1)Core Requirements (2) Database Implementation Requirements and (3)Balanced Custom Features by Academic Level Requirements for the version you select.</p>
+
+</p>
+    </div>
+</section>
+
+        <section class="tab-container">
+            <div class="tabs">
+                <button class="tab active" data-tab="version1">
+                    <div class="version-icon">🎅</div>
+                    Santa's Workshop
+                </button>
+                <button class="tab" data-tab="version2">
+                    <div class="version-icon">🦌</div>
+                    Reindeer Games
+                </button>
+                <button class="tab" data-tab="version3">
+                    <div class="version-icon">🧝</div>
+                    The Elf AI Workshop
+                </button>
+            </div>
+
+            <article class="tab-content active" id="version1">
+                <div class="version-card">
+                    <h3>Version 1: Santa's Workshop <span class="complexity-badge">Festive & Engaging</span></h3>
+                    <p>This version learns from your gameplay and adjusts difficulty in real-time. The better you play, the harder it gets!</p>
+
+                    <div class="puzzle-container santa-theme">
+                        <div class="demo-timer">Time: <span id="santa-timer">0</span>s</div>
+                        <div class="puzzle-grid" id="santa-grid"></div>
+                        <div class="demo-status" id="santa-status">Click a tile next to the empty space to move it</div>
+                        <div class="demo-completion" id="santa-completion">Congratulations! You solved the puzzle!</div>
+                        <div class="demo-controls">
+                            <button class="demo-btn" id="santa-shuffle">Shuffle</button>
+                            <button class="demo-btn" id="santa-reset">Reset</button>
+                            <button class="demo-btn" id="santa-hint">Use Magic</button>
+                        </div>
+                    </div>
+
+                    <h4>Core Requirements:</h4>
+                    <div class="modern-feature-list">
+                        <div class="modern-feature">
+                            <div class="feature-header">
+                                <div class="feature-icon">🎮</div>
+                                <div class="feature-title">Adaptive Gameplay Experience</div>
+                            </div>
+                            <p>Implement intelligent difficulty scaling that adjusts based on player performance, with progressive puzzle generation and player skill tracking.</p>
+                            <div class="feature-tag">Smart Learning System</div>
+                        </div>
+
+                        <div class="modern-feature">
+                            <div class="feature-header">
+                                <div class="feature-icon">🧩</div>
+                                <div class="feature-title">Dynamic Puzzle Mechanics</div>
+                            </div>
+                            <p>Create multi-size puzzle support with default 4x4 and options for 3x3, 6x6, 8x8, 10x10 with strategic row/column slide shuffling that highlights movable tiles for enhanced gameplay.</p>
+                            <div class="feature-tag">Flexible Gameplay</div>
+                        </div>
+
+                        <div class="modern-feature">
+                            <div class="feature-header">
+                                <div class="feature-icon">⏱️</div>
+                                <div class="feature-title">Immersive Audio-Visual Experience</div>
+                            </div>
+                            <p>Build a dynamic game timer with festive background music that intensifies during gameplay, complemented by smooth tile animations.</p>
+                            <div class="feature-tag">Sensory Engagement</div>
+                        </div>
+
+                        <div class="modern-feature">
+                            <div class="feature-header">
+                                <div class="feature-icon">🏆</div>
+                                <div class="feature-title">Celebratory Completion System</div>
+                            </div>
+                            <p>Design an engaging victory sequence with animations, visual effects, and celebration sounds that reward player achievements.</p>
+                            <div class="feature-tag">Player Rewards</div>
+                        </div>
+
+                        <div class="modern-feature">
+                            <div class="feature-header">
+                                <div class="feature-icon">📊</div>
+                                <div class="feature-title">Comprehensive Progress Tracking</div>
+                            </div>
+                            <p>Develop a system to track player sessions, moves, completion times, and difficulty progression with detailed analytics.</p>
+                            <div class="feature-tag">Data Insights</div>
+                        </div>
+
+                        <div class="modern-feature">
+                            <div class="feature-header">
+                                <div class="feature-icon">🔍</div>
+                                <div class="feature-title">Strategic Assistance Features</div>
+                            </div>
+                            <p>Implement puzzle preview systems and magic hints that provide limited-time assistance based on difficulty level.</p>
+                            <div class="feature-tag">Player Support</div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="tab-content" id="version2">
+                <div class="version-card">
+                    <h3>Version 2: Reindeer Games <span class="complexity-badge">Social & Competitive</span></h3>
+                    <p>Challenge your friends in real-time puzzle solving competitions! See who can solve puzzles faster.</p>
+
+                    <div class="puzzle-container reindeer-theme">
+                        <div class="demo-timer">Time: <span id="reindeer-timer">0</span>s</div>
+                        <div class="puzzle-grid" id="reindeer-grid"></div>
+                        <div class="demo-status" id="reindeer-status">Click a tile next to the empty space to move it</div>
+                        <div class="demo-completion" id="reindeer-completion">Congratulations! You solved the puzzle!</div>
+                        <div class="demo-controls">
+                            <button class="demo-btn" id="reindeer-shuffle">Shuffle</button>
+                            <button class="demo-btn" id="reindeer-reset">Reset</button>
+                            <button class="demo-btn" id="reindeer-sound">Reindeer Sounds</button>
+                        </div>
+                    </div>
+
+                    <h4>Core Requirements:</h4>
+                    <div class="modern-feature-list">
+                        <div class="modern-feature">
+                            <div class="feature-header">
+                                <div class="feature-icon">👥</div>
+                                <div class="feature-title">Social Gaming Platform</div>
+                            </div>
+                            <p>Build user authentication, real-time multiplayer functionality, and competitive matchmaking for head-to-head puzzle challenges.</p>
+                            <div class="feature-tag">Community Focus</div>
+                        </div>
+
+                        <div class="modern-feature">
+                            <div class="feature-header">
+                                <div class="feature-icon">🏅</div>
+                                <div class="feature-title">Competitive Game Modes</div>
+                            </div>
+                            <p>Design multiple competitive formats (speed solving, fewest moves) with comprehensive leaderboards and ranking systems.</p>
+                            <div class="feature-tag">Challenge System</div>
+                        </div>
+
+                        <div class="modern-feature">
+                            <div class="feature-header">
+                                <div class="feature-icon">🧩</div>
+                                <div class="feature-title">Dynamic Puzzle Mechanics</div>
+                            </div>
+                            <p>Create multi-size puzzle support with default 4x4 and options for 3x3, 6x6, 8x8, 10x10 with strategic relay shuffling that enables chain reaction moves for tactical gameplay.</p>
+                            <div class="feature-tag">Flexible Gameplay</div>
+                        </div>
+
+                        <div class="modern-feature">
+                            <div class="feature-header">
+                                <div class="feature-icon">⏱️</div>
+                                <div class="feature-title">Immersive Audio-Visual Experience</div>
+                            </div>
+                            <p>Build a dynamic game timer with competitive sound effects and music that builds tension, complemented by smooth tile animations.</p>
+                            <div class="feature-tag">Sensory Engagement</div>
+                        </div>
+
+                        <div class="modern-feature">
+                            <div class="feature-header">
+                                <div class="feature-icon">🏆</div>
+                                <div class="feature-title">Celebratory Completion System</div>
+                            </div>
+                            <p>Design an engaging victory sequence with animations, visual effects, and celebration sounds that highlight competitive achievements.</p>
+                            <div class="feature-tag">Player Rewards</div>
+                        </div>
+
+                        <div class="modern-feature">
+                            <div class="feature-header">
+                                <div class="feature-icon">📊</div>
+                                <div class="feature-title">Performance Analytics</div>
+                            </div>
+                            <p>Track player statistics, match outcomes, and skill progression with detailed analytics for competitive improvement.</p>
+                            <div class="feature-tag">Data Insights</div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="tab-content" id="version3">
+                <div class="version-card">
+                    <h3>Version 3: The Elf AI Workshop <span class="complexity-badge">Algorithm Mastery</span></h3>
+                    <p>Build an intelligent system that can solve puzzles and create challenging new ones. Become a puzzle master!</p>
+
+                    <div class="puzzle-container elf-theme">
+                        <div class="demo-timer">Time: <span id="elf-timer">0</span>s</div>
+                        <div class="puzzle-grid" id="elf-grid"></div>
+                        <div class="demo-status" id="elf-status">Click a tile next to the empty space to move it</div>
+                        <div class="demo-completion" id="elf-completion">Congratulations! You solved the puzzle!</div>
+                        <div class="demo-controls">
+                            <button class="demo-btn" id="elf-shuffle">Shuffle</button>
+                            <button class="demo-btn" id="elf-reset">Reset</button>
+                            <button class="demo-btn" id="elf-bloom">Make Toys</button>
+                        </div>
+                    </div>
+
+                    <h4>Core Requirements:</h4>
+                    <div class="modern-feature-list">
+                        <div class="modern-feature">
+                            <div class="feature-header">
+                                <div class="feature-icon">🤖</div>
+                                <div class="feature-title">Intelligent Algorithm Suite</div>
+                            </div>
+                            <p>Implement multiple puzzle-solving algorithms (BFS, DFS, A*) with performance analytics and intelligent difficulty-based puzzle generation.</p>
+                            <div class="feature-tag">AI-Powered</div>
+                        </div>
+
+                        <div class="modern-feature">
+                            <div class="feature-header">
+                                <div class="feature-icon">🎯</div>
+                                <div class="feature-title">Smart Puzzle Generation</div>
+                            </div>
+                            <p>Create an AI-driven system that generates puzzles of specific difficulty levels using strategic moves rather than random shuffling.</p>
+                            <div class="feature-tag">Precision Crafting</div>
+                        </div>
+
+                        <div class="modern-feature">
+                            <div class="feature-header">
+                                <div class="feature-icon">🧩</div>
+                                <div class="feature-title">Dynamic Puzzle Mechanics</div>
+                            </div>
+                            <p>Create multi-size puzzle support with default 4x4 and options for 3x3, 6x6, 8x8, 10x10 with AI-enhanced shuffling that creates optimally challenging configurations.</p>
+                            <div class="feature-tag">Flexible Gameplay</div>
+                        </div>
+
+                        <div class="modern-feature">
+                            <div class="feature-header">
+                                <div class="feature-icon">⏱️</div>
+                                <div class="feature-title">Immersive Audio-Visual Experience</div>
+                            </div>
+                            <p>Build a dynamic game timer with atmospheric AI-generated soundscapes that respond to algorithm performance and puzzle complexity.</p>
+                            <div class="feature-tag">Sensory Engagement</div>
+                        </div>
+
+                        <div class="modern-feature">
+                            <div class="feature-header">
+                                <div class="feature-icon">🏆</div>
+                                <div class="feature-title">Celebratory Completion System</div>
+                            </div>
+                            <p>Design an engaging victory sequence with animations, visual effects, and celebration sounds that acknowledge algorithmic mastery.</p>
+                            <div class="feature-tag">Player Rewards</div>
+                        </div>
+
+                        <div class="modern-feature">
+                            <div class="feature-header">
+                                <div class="feature-icon">📊</div>
+                                <div class="feature-title">Advanced Analytics Dashboard</div>
+                            </div>
+                            <p>Develop comprehensive performance tracking for algorithms, puzzle statistics, and solving efficiency with detailed visualizations.</p>
+                            <div class="feature-tag">Data Insights</div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section class="code-protection">
+            <h3>🔒 Protected Implementation</h3>
+            <p>The JavaScript code for these demo puzzles has been intentionally obfuscated to prevent direct copying.</p>
+            <p>You are expected to write your own implementation from scratch based on the requirements provided.</p>
+        </section>
+
+        <section class="database-requirements">
+            <h3>Database Implementation Requirements</h3>
+            <p>All versions must implement a comprehensive database system with the following components:</p>
+
+            <div class="requirements-grid">
+                <div class="requirement-item">
+                    <h4>User Management</h4>
+                    <p>Tables for users, authentication, profiles, and preferences with proper security measures.</p>
+                </div>
+
+                <div class="requirement-item">
+                    <h4>Game Sessions</h4>
+                    <p>Track every game session with timestamps, moves, completion status, and performance metrics.</p>
+                </div>
+
+                <div class="requirement-item">
+                    <h4>Puzzle Storage</h4>
+                    <p>Store puzzle configurations, difficulty ratings, and solution paths.</p>
+                </div>
+
+                <div class="requirement-item">
+                    <h4>Analytics</h4>
+                    <p>Comprehensive analytics tables for player behavior, puzzle popularity, and system performance.</p>
+                </div>
+
+                <div class="requirement-item">
+                    <h4>Security & Performance</h4>
+                    <p>Implement proper SQL injection prevention using prepared statements, design efficient database indexes for common query patterns, and implement proper transaction handling for critical operations.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Balanced Custom Features by Academic Level</h2>
+            <p>These features are designed to provide consistent challenge across all project versions while accounting for different academic levels.</p>
+
+            <div class="academic-levels">
+                <div class="academic-level undergrad-level">
+                    <div class="level-badge undergrad-badge">UNDERGRADUATE</div>
+                    <div class="level-icon">🎓</div>
+                    <h3>Undergraduate Requirements</h3>
+                    <p>Complete <strong>4 custom features</strong> from the balanced feature set below.</p>
+
+                    <div class="feature-grid">
+                        <div class="feature-item undergrad-feature">
+                            <div class="feature-icon">🎄</div>
+                            <div>
+                                <h4>Festive Theme System</h4>
+                                <p>Create a system that changes visual themes based on player performance or time of day.</p>
+                            </div>
+                        </div>
+
+                        <div class="feature-item undergrad-feature">
+                            <div class="feature-icon">🎁</div>
+                            <div>
+                                <h4>Gift & Reward System</h4>
+                                <p>Design a comprehensive achievement system with unique gifts for various accomplishments.</p>
+                            </div>
+                        </div>
+
+                        <div class="feature-item undergrad-feature">
+                            <div class="feature-icon">✨</div>
+                            <div>
+                                <h4>Holiday Magic Power-ups</h4>
+                                <p>Implement special power-ups that players can earn and use during gameplay.</p>
+                            </div>
+                        </div>
+
+                        <div class="feature-item undergrad-feature">
+                            <div class="feature-icon">📖</div>
+                            <div>
+                                <h4>Christmas Story Mode</h4>
+                                <p>Create an engaging holiday narrative that unfolds as players progress through puzzles.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="academic-level grad-level">
+                    <div class="level-badge grad-badge">GRADUATE</div>
+                    <div class="level-icon">👨‍🎓</div>
+                    <h3>Graduate Requirements</h3>
+                    <p>Complete <strong>6 custom features</strong> with increased complexity.</p>
+
+                    <div class="feature-grid">
+                        <div class="feature-item grad-feature">
+                            <div class="feature-icon">🎄</div>
+                            <div>
+                                <h4>Advanced Festive Theme System</h4>
+                                <p>Create dynamic holiday themes with user customization and performance-based transitions.</p>
+                            </div>
+                        </div>
+
+                        <div class="feature-item grad-feature">
+                            <div class="feature-icon">🎁</div>
+                            <div>
+                                <h4>Comprehensive Gift System</h4>
+                                <p>Design achievements with tracking, sharing, and social comparison features.</p>
+                            </div>
+                        </div>
+
+                        <div class="feature-item grad-feature">
+                            <div class="feature-icon">✨</div>
+                            <div>
+                                <h4>Strategic Magic Power-up System</h4>
+                                <p>Implement balanced power-ups with strategic elements and resource management.</p>
+                            </div>
+                        </div>
+
+                        <div class="feature-item grad-feature">
+                            <div class="feature-icon">📖</div>
+                            <div>
+                                <h4>Interactive Christmas Story</h4>
+                                <p>Create branching holiday narratives with player choices affecting puzzle progression.</p>
+                            </div>
+                        </div>
+
+                        <div class="feature-item grad-feature">
+                            <div class="feature-icon">👥</div>
+                            <div>
+                                <h4>Advanced Social Features</h4>
+                                <p>Implement friend lists, challenge sharing, and collaborative puzzle solving.</p>
+                            </div>
+                        </div>
+
+                        <div class="feature-item grad-feature">
+                            <div class="feature-icon">📊</div>
+                            <div>
+                                <h4>Predictive Analytics</h4>
+                                <p>Build player behavior analysis and predictive difficulty adjustment systems.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="important-note">
+                <p><strong>Code Authenticity Requirement:</strong> You must include a "Development Journal" documenting your problem-solving process, including failed approaches and how you overcame implementation challenges. This demonstrates original critical thinking.</p>
+            </div>
+        </section>
+
+        <!-- About Presentation & Defense Button -->
+    <p style="color: var(--warning); font-weight: bold; font-size: 1.2rem; text-align: center;">
+    Must Read
+    </p>
+        <button class="presentation-info-btn" id="presentationInfoBtn" style="display: block; margin: 1.5rem auto;">
+            View Presentation & Defense Info 🎅
+        </button>
+
+        <!-- About Presentation & Defense Section -->
+        <section class="presentation-info" id="presentationInfo">
+            <h3>About Presentation & Defense</h3>
+            <p>All projects will include a live demonstration and code walkthrough where you must explain your implementation decisions and defend your architectural choices. This ensures deep understanding of your code.</p>
+
+            <div class="presentation-requirements">
+                <h4>🎄 Presentation Requirements</h4>
+                <p>A clear and thorough demonstration is critical for assessment. All team members must be prepared to:</p>
+                <ul>
+                    <li><strong>Provide detailed code explanation:</strong> Walk through your codebase, explaining the role and functionality of each key file and how they integrate in your project folder structure (VS-Code).</li>
+                    <li><strong>Execute live, functional demo:</strong> Demonstrate the application running successfully. You must explicitly show Firebase integration in action.</li>
+                     <li><strong>🎅 The Web Team Main Focus Areas for Grading Impact</strong> Demonstrate the application running successfully. You must explicitly show all the integration in action.</li>
+                </ul>
+            </div>
+
+
+            </div>
+
+            <button class="close-btn" id="closeInfoBtn">Close</button>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Christmas Fifteen Puzzle Project &copy; 2025 Holiday Edition | Final Semester Project</p>
+            <p>This project challenges critical thinking, database design, and creative problem-solving skills.</p>
+        </div>
+    </footer>
+
+
+</body>
+</html>
