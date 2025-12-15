@@ -1,4 +1,3 @@
-````markdown
 # 🎄 Santa’s Workshop Fifteen Puzzle
 
 A Santa-themed Fifteen Puzzle game featuring user accounts, persistent progress, dynamic difficulty, achievements, story progression, and gameplay assistance.
