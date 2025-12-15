@@ -238,18 +238,6 @@ A reconstructed Kanban board was created based on completed tasks for documentat
 
 -----
 
-### 🧪 Development Journal Highlights
-
-  * Database schema planning for persistence
-  * Secure authentication implementation
-  * Session lifecycle management
-  * Fixing timer behavior (start on Shuffle only)
-  * Server-side achievement logic
-  * Assistance features designed to reduce frustration while preserving challenge
-  * Story progression tied strictly to completed sessions
-
------
-
 ### ✅ Testing Checklist
 
   * Timer starts only on Shuffle
