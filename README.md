@@ -127,7 +127,7 @@ Guest users can play freely. Logging in enables progress tracking and story mode
 2. Import `schema.sql`.
 3. Update credentials in `api/db.php`.
 
-```sql
+
 SOURCE schema.sql;
 
 Key Tables
