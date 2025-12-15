@@ -6,16 +6,6 @@
 SET NAMES utf8mb4;
 SET time_zone = '+00:00';
 
--- Optional: clean reset (comment out if you don't want drops)
-DROP TABLE IF EXISTS analytics_events;
-DROP TABLE IF EXISTS user_story_progress;
-DROP TABLE IF EXISTS user_achievements;
-DROP TABLE IF EXISTS achievements;
-DROP TABLE IF EXISTS game_sessions;
-DROP TABLE IF EXISTS puzzles;
-DROP TABLE IF EXISTS auth_sessions;
-DROP TABLE IF EXISTS users;
-
 -- =========================
 -- 1) USER MANAGEMENT
 -- =========================
@@ -182,7 +172,7 @@ CREATE TABLE analytics_events (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =========================
--- Seed achievement definitions (optional but useful)
+-- Seed achievement definitions
 -- =========================
 
 INSERT INTO achievements (code, title, description) VALUES
